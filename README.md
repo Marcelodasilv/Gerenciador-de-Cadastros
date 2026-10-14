@@ -2,7 +2,7 @@
 
 Este é um projeto básico em **Java** que implementa as operações fundamentais de um sistema CRUD (Create, Read, Update, Delete) através de uma interface de console/menu. O projeto utiliza o **Maven** para o gerenciamento de dependências.
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 O projeto está organizado da seguinte forma:
 
@@ -19,12 +19,12 @@ O projeto está organizado da seguinte forma:
     *   `.gitignore` - Arquivo para ignorar arquivos desnecessários no Git.
     *   `README.md` - Documentação do projeto.
 
-## 🚀 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 *   **Java** (Versão recomendada: 17 ou superior)
 *   **Maven** (Gerenciador de dependências e build)
 
-## 🛠️ Como Executar o Projeto
+## Como Executar o Projeto
 
 ### Pré-requisitos
 Antes de começar, você vai precisar ter instalado em sua máquina:
