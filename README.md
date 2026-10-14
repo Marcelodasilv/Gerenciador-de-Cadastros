@@ -1,150 +1,94 @@
-# Teste de Aplicação com MySQL e Maven
+Gerenciador de Cadastros
 
-Projeto Java de teste para validar a conexão e as operações básicas (CRUD) com um banco de dados **MySQL**, usando **Maven** para gerenciar dependências e o build.
+Aplicação Java de console para gerenciar cadastros (CRUD) em um banco de dados MySQL, usando JDBC e Maven para gerenciar o build e as dependências.
 
-## Objetivo
+Este README descreve como configurar o banco, rodar a aplicação e testar cada operação.
 
-- Testar a conexão de uma aplicação Java com o MySQL via JDBC
-- Validar operações de inserção, consulta, atualização e remoção
-- Praticar a estrutura de um projeto Maven com dependências externas
+Tecnologias
+JDK 21 (Temurin)
+Maven
+MySQL 8.x
+mysql-connector-j (driver JDBC, via dependência no pom.xml)
+IntelliJ IDEA (opcional, mas é o ambiente de desenvolvimento do projeto)
+Estrutura do projeto
+GerenciadorCadastros/
+├── pom.xml
+├── README.md
+└── src/main/java/
+    ├── Main.java        # ponto de entrada
+    ├── Menu.java        # menu interativo no console
+    ├── Database.java    # conexão com o MySQL
+    ├── Insert.java      # cadastrar
+    ├── Read.java        # listar / consultar
+    ├── Update.java      # atualizar
+    └── Delete.java      # remover
+1. Configurar o banco de dados
 
-## Tecnologias
+Abra o MySQL (Workbench ou terminal) e rode:
 
-- Java 17+ (ou a versão que você usa)
-- Maven 3.8+
-- MySQL 8.x
-- MySQL Connector/J (driver JDBC)
+sql
+CREATE DATABASE IF NOT EXISTS gerenciador_cadastros;
+USE gerenciador_cadastros;
 
-## Pré-requisitos
-
-Verifique se tudo está instalado:
-
-```bash
-java -version
-mvn -version
-mysql --version
-```
-
-## Configuração do banco de dados
-
-1. Acesse o MySQL:
-
-```bash
-mysql -u root -p
-```
-
-2. Crie o banco e a tabela de teste:
-
-```sql
-CREATE DATABASE IF NOT EXISTS teste_db;
-USE teste_db;
-
-CREATE TABLE IF NOT EXISTS usuarios (
+-- Ajuste as colunas conforme a sua tabela real
+CREATE TABLE IF NOT EXISTS cadastros (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    email VARCHAR(100)
 );
-```
+2. Configurar a conexão
 
-## Dependência do Maven
+Em Database.java, a conexão usa uma URL JDBC, um usuário e uma senha.
 
-No `pom.xml`, adicione o driver do MySQL:
+java
+String url = "jdbc:mysql://localhost:3306/gerenciador_cadastros";
+String usuario = System.getenv("DB_USER");
+String senha = System.getenv("DB_PASSWORD");
 
-```xml
+Importante: nunca escreva a senha direto no código que vai para o GitHub. Defina DB_USER e DB_PASSWORD como variáveis de ambiente.
+
+No IntelliJ: Run > Edit Configurations > Environment variables e adicione:
+
+DB_USER=root;DB_PASSWORD=sua_senha
+3. Dependência do Maven
+
+O driver do MySQL fica no pom.xml:
+
+xml
 <dependency>
     <groupId>com.mysql</groupId>
     <artifactId>mysql-connector-j</artifactId>
     <version>8.4.0</version>
 </dependency>
-```
 
-Para testes automatizados, adicione também o JUnit:
+Depois de editar o pom.xml, no IntelliJ clique no ícone de Reload All Maven Projects (aba Maven, à direita) para baixar as dependências.
 
-```xml
-<dependency>
-    <groupId>org.junit.jupiter</groupId>
-    <artifactId>junit-jupiter</artifactId>
-    <version>5.10.2</version>
-    <scope>test</scope>
-</dependency>
-```
+4. Executar
 
-## Configuração da conexão
+Pelo IntelliJ (mais simples): abra Main.java e clique no botão verde de Run.
 
-Ajuste as credenciais na classe de conexão (ou em um arquivo de configuração):
+Pelo terminal (opcional):
 
-```java
-String url = "jdbc:mysql://localhost:3306/teste_db";
-String usuario = "root";
-String senha = "sua_senha";
-```
-
-> **Atenção:** não envie senhas reais para o GitHub. Use variáveis de ambiente ou um arquivo de configuração listado no `.gitignore`.
-
-## Estrutura do projeto
-
-```
-projeto/
-├── pom.xml
-├── README.md
-└── src/
-    ├── main/java/com/exemplo/
-    │   ├── Main.java
-    │   ├── ConexaoDB.java
-    │   └── UsuarioDAO.java
-    └── test/java/com/exemplo/
-        └── ConexaoDBTest.java
-```
-
-## Como executar
-
-Compilar o projeto:
-
-```bash
+bash
 mvn clean compile
-```
+mvn exec:java -Dexec.mainClass="Main"
+5. Roteiro de testes manuais
 
-Rodar os testes:
+Siga esta ordem usando o menu do console e confira o resultado no MySQL com SELECT * FROM cadastros;.
 
-```bash
-mvn test
-```
+#	Operação	O que fazer	Resultado esperado
+1	Conexão	Rodar a aplicação	Menu aparece, sem erro de conexão
+2	Insert	Cadastrar um registro	Mensagem de sucesso e registro na tabela
+3	Read	Listar os cadastros	O registro do passo 2 aparece
+4	Update	Alterar o nome do registro	Dado atualizado no banco
+5	Delete	Remover o registro	Registro some da listagem e do banco
+6	Erro	Tentar atualizar/remover um ID que não existe	Mensagem tratada, sem a aplicação quebrar
+Problemas comuns
+Communications link failure: o serviço do MySQL não está rodando ou a porta está errada.
+Access denied for user: usuário ou senha incorretos (confira as variáveis de ambiente).
+Unknown database: o banco gerenciador_cadastros ainda não foi criado.
+ClassNotFoundException: com.mysql.cj.jdbc.Driver: o Maven não baixou o driver. Recarregue o projeto Maven.
+Erro de timezone: adicione ?serverTimezone=UTC no final da URL de conexão.
+Autor
 
-Gerar o pacote (`.jar`):
-
-```bash
-mvn clean package
-```
-
-Executar a aplicação:
-
-```bash
-mvn exec:java -Dexec.mainClass="com.exemplo.Main"
-```
-
-## O que é testado
-
-| Teste | Descrição | Resultado esperado |
-|-------|-----------|--------------------|
-| Conexão | Abre conexão com o MySQL | Conexão válida |
-| Inserir | Cadastra um usuário | Registro criado |
-| Listar | Consulta todos os usuários | Lista retornada |
-| Atualizar | Altera dados de um usuário | Registro atualizado |
-| Remover | Exclui um usuário | Registro removido |
-
-## Problemas comuns
-
-- **`Communications link failure`**: o MySQL não está rodando ou a porta/host está incorreta.
-- **`Access denied for user`**: usuário ou senha incorretos.
-- **`Unknown database`**: o banco `teste_db` não foi criado.
-- **`ClassNotFoundException: com.mysql.cj.jdbc.Driver`**: a dependência do conector não está no `pom.xml` ou o Maven não baixou as dependências (`mvn clean install`).
-- **Erro de timezone**: adicione `?serverTimezone=UTC` à URL de conexão.
-
-## Autor
-
-Desenvolvido para fins de estudo e teste.
-
-## Licença
-
-Uso livre para fins educacionais.
+Marcelo da Silva Barbosa - GitHub
