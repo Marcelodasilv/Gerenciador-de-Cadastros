@@ -1,94 +1,52 @@
-Gerenciador de Cadastros
+# Cadastros - Sistema de Menu CRUD
 
-Aplicação Java de console para gerenciar cadastros (CRUD) em um banco de dados MySQL, usando JDBC e Maven para gerenciar o build e as dependências.
+Este é um projeto básico em **Java** que implementa as operações fundamentais de um sistema CRUD (Create, Read, Update, Delete) através de uma interface de console/menu. O projeto utiliza o **Maven** para o gerenciamento de dependências.
 
-Este README descreve como configurar o banco, rodar a aplicação e testar cada operação.
+## 📁 Estrutura do Projeto
 
-Tecnologias
-JDK 21 (Temurin)
-Maven
-MySQL 8.x
-mysql-connector-j (driver JDBC, via dependência no pom.xml)
-IntelliJ IDEA (opcional, mas é o ambiente de desenvolvimento do projeto)
-Estrutura do projeto
-GerenciadorCadastros/
-├── pom.xml
-├── README.md
-└── src/main/java/
-    ├── Main.java        # ponto de entrada
-    ├── Menu.java        # menu interativo no console
-    ├── Database.java    # conexão com o MySQL
-    ├── Insert.java      # cadastrar
-    ├── Read.java        # listar / consultar
-    ├── Update.java      # atualizar
-    └── Delete.java      # remover
-1. Configurar o banco de dados
+O projeto está organizado da seguinte forma:
 
-Abra o MySQL (Workbench ou terminal) e rode:
+*   **Cadastros/** (Diretório raiz)
+    *   **Menu/** (Pacote/Pasta principal do sistema de menu)
+        *   `Implementa/` - Pasta destinada às implementações das lógicas de negócio.
+        *   `Main.java` - Ponto de entrada do aplicativo (método `main`).
+        *   `Menu.java` - Controla a exibição e o fluxo de opções do menu.
+        *   `INSERT.java` - Responsável pela criação/inserção de novos registros.
+        *   `READ.java` - Responsável pela leitura/exibição de registros.
+        *   `UPDATE.java` - Responsável pela atualização de registros existentes.
+        *   `DELETE.java` - Responsável pela remoção de registros.
+    *   `pom.xml` - Arquivo de configuração do Maven.
+    *   `.gitignore` - Arquivo para ignorar arquivos desnecessários no Git.
+    *   `README.md` - Documentação do projeto.
 
-sql
-CREATE DATABASE IF NOT EXISTS gerenciador_cadastros;
-USE gerenciador_cadastros;
+## 🚀 Tecnologias Utilizadas
 
--- Ajuste as colunas conforme a sua tabela real
-CREATE TABLE IF NOT EXISTS cadastros (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100)
-);
-2. Configurar a conexão
+*   **Java** (Versão recomendada: 17 ou superior)
+*   **Maven** (Gerenciador de dependências e build)
 
-Em Database.java, a conexão usa uma URL JDBC, um usuário e uma senha.
+## 🛠️ Como Executar o Projeto
 
-java
-String url = "jdbc:mysql://localhost:3306/gerenciador_cadastros";
-String usuario = System.getenv("DB_USER");
-String senha = System.getenv("DB_PASSWORD");
+### Pré-requisitos
+Antes de começar, você vai precisar ter instalado em sua máquina:
+*   [Java JDK](https://oracle.com)
+*   [Apache Maven](https://apache.org) (ou usar o suporte ao Maven integrado na sua IDE)
 
-Importante: nunca escreva a senha direto no código que vai para o GitHub. Defina DB_USER e DB_PASSWORD como variáveis de ambiente.
+### Passo a Passo
 
-No IntelliJ: Run > Edit Configurations > Environment variables e adicione:
+1. **Clonar o repositório:**
+   ```bash
+   git clone https://github.com
+   ```
 
-DB_USER=root;DB_PASSWORD=sua_senha
-3. Dependência do Maven
+2. **Navegar até a pasta do projeto:**
+   ```bash
+   cd Cadastros
+   ```
 
-O driver do MySQL fica no pom.xml:
+3. **Compilar o projeto com o Maven:**
+   ```bash
+   mvn clean package
+   ```
 
-xml
-<dependency>
-    <groupId>com.mysql</groupId>
-    <artifactId>mysql-connector-j</artifactId>
-    <version>8.4.0</version>
-</dependency>
-
-Depois de editar o pom.xml, no IntelliJ clique no ícone de Reload All Maven Projects (aba Maven, à direita) para baixar as dependências.
-
-4. Executar
-
-Pelo IntelliJ (mais simples): abra Main.java e clique no botão verde de Run.
-
-Pelo terminal (opcional):
-
-bash
-mvn clean compile
-mvn exec:java -Dexec.mainClass="Main"
-5. Roteiro de testes manuais
-
-Siga esta ordem usando o menu do console e confira o resultado no MySQL com SELECT * FROM cadastros;.
-
-#	Operação	O que fazer	Resultado esperado
-1	Conexão	Rodar a aplicação	Menu aparece, sem erro de conexão
-2	Insert	Cadastrar um registro	Mensagem de sucesso e registro na tabela
-3	Read	Listar os cadastros	O registro do passo 2 aparece
-4	Update	Alterar o nome do registro	Dado atualizado no banco
-5	Delete	Remover o registro	Registro some da listagem e do banco
-6	Erro	Tentar atualizar/remover um ID que não existe	Mensagem tratada, sem a aplicação quebrar
-Problemas comuns
-Communications link failure: o serviço do MySQL não está rodando ou a porta está errada.
-Access denied for user: usuário ou senha incorretos (confira as variáveis de ambiente).
-Unknown database: o banco gerenciador_cadastros ainda não foi criado.
-ClassNotFoundException: com.mysql.cj.jdbc.Driver: o Maven não baixou o driver. Recarregue o projeto Maven.
-Erro de timezone: adicione ?serverTimezone=UTC no final da URL de conexão.
-Autor
-
-Marcelo da Silva Barbosa - GitHub
+4. **Executar a aplicação:**
+   Você pode rodar o projeto diretamente pela sua IDE de preferência (IntelliJ IDEA, Eclipse, VS Code) executando a classe `Main.java`, ou via terminal se tiver o plugin do Maven configurado para execução.
